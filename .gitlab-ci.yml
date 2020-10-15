@@ -3,9 +3,9 @@
 build:
   stage: build
   script:
-    - echo "Currently in the build stage. "
+    - echo "Currently in the build stage."
 
 test:
   stage: test
   script:
-    - echo "Currently in the test stage. "
+    - echo "Currently in the test stage."
