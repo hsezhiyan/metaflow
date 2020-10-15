@@ -3,7 +3,7 @@
 build:
   stage: build
   script:
-    - echo "Nothing to build."
+    - echo "Nothing to build. "
 
 test:
   stage: test
