@@ -8,6 +8,7 @@ build:
 test:
   stage: test
   script:
+    - ls
     - pip install -e .
     - pip install 'git+https://github.com/alexlatchford/pipelines@alexla/AIP-1676#egg=kfp&subdirectory=sdk/python'
     - pip install awscli click requests boto3 pytest
