@@ -3,9 +3,11 @@
 build:
   stage: build
   script:
-    - echo "Currently in the build stage."
+    - echo "Nothing to build."
 
 test:
   stage: test
   script:
+    - pip install 'git+https://github.com/alexlatchford/pipelines@alexla/AIP-1676#egg=kfp&subdirectory=sdk/python'
+    - pip install awscli click requests boto3 pytest
     - echo "Currently in the test stage."
