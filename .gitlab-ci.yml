@@ -1,4 +1,4 @@
-# Barebones template to ensure pipeline is triggered.
+# Barebones template to ensure pipeline is triggered
 
 build:
   stage: build
