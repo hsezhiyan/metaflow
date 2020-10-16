@@ -1,6 +1,6 @@
 FROM hsezhiyan/metaflow-integration-testing:1.0
 RUN aws sts get-caller-identity
-RUN aws sts assume-role --role-arn arn:aws:iam::867983855862:role/deploy-kubeflow-pipeline-editors
+RUN aws sts assume-role --role-arn arn:aws:iam::867983855862:role/deploy-kubeflow-pipeline-editors --role-session-name s3-access-session
 COPY . /metaflow
 RUN pip install -e /metaflow
 RUN export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && \
