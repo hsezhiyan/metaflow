@@ -1,4 +1,5 @@
 FROM hsezhiyan/metaflow-integration-testing:1.0
+RUN aws sts get-caller-identity
 COPY . /metaflow
 RUN pip install -e /metaflow
 RUN export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && \
