@@ -1,6 +1,6 @@
 # Barebones template to ensure pipeline is triggered.
 
-build_and_test:
-  stage: build_and_test
+build:
+  stage: build
   script:
     - docker build .
