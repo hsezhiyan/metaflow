@@ -1,26 +1,5 @@
 # Barebones template to ensure pipeline is triggered.
 
-.devex_internal_eks:
-  tags:
-    - aip-infrastructure
-    - dev
-  variables: &devex-internal-eks
-    DEFAULT_AWS_DEFAULT_REGION: us-west-2
-    DEFAULT_EKS_CLUSTER_NAME: aianalytics-dev-k8s-1
-    DEFAULT_KUBECONFIG_IAM_ROLE: arn:aws:iam::867983855862:role/deploy-kubeflow-pipeline-editors
-    DEFAULT_KUBEFLOW_DOMAIN: kubeflow.corp.dev-k8s.zg-aip.net
-
-    # Don't bother to checkout the git repo when working with AWS, likely we don't need any of the
-    # files from there as it's not a build step. See: https://docs.gitlab.com/ee/ci/yaml/#git-strategy
-    GIT_STRATEGY: none
-
-
-.model_developer_env_internal:
-  extends: .devex_internal_eks
-  variables:
-    MODEL_DEVELOPER_ENV: "internal" 
-
-
 build:
   stage: build
   script:
