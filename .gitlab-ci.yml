@@ -22,8 +22,6 @@
 
 
 build:
-  extends:
-  - .model_developer_env_internal
   stage: build
   script:
     - docker build .
