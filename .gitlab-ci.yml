@@ -3,4 +3,6 @@
 build:
   stage: build
   script:
+    - aws sts get-caller-identity
+    - aws sts assume-role --role-arn arn:aws:iam::867983855862:role/deploy-kubeflow-pipeline-editors --role-session-name s3-access-session
     - docker build .
