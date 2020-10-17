@@ -1,5 +1,4 @@
 FROM hsezhiyan/metaflow-integration-testing:1.0
-FROM analytics-docker.artifactory.zgtools.net/aip-doit-modules:1.0.d281326f.master
 # RUN aws sts get-caller-identity
 RUN aws sts assume-role --role-arn arn:aws:iam::137756892286:role/service-ai-platform-dev-gitlab-runner --role-session-name s3-access-session
 COPY . /metaflow
@@ -11,6 +10,6 @@ RUN export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && \
     export METAFLOW_DEFAULT_DATASTORE=local && \
     export METAFLOW_USER=hariharans@zillowgroup.com && \
     cd /metaflow/metaflow/plugins/kfp/tests && \
-    # python -m pytest -s -n 2 run_integration_tests.py
+    python -m pytest -s -n 2 run_integration_tests.py
     # python static_branching.py --datastore=s3 kfp run
     # python -c "import boto3; sess = boto3.Session(); print(sess.available_profiles)"
