@@ -1,6 +1,6 @@
 FROM hsezhiyan/metaflow-integration-testing:1.0
 # RUN aws sts get-caller-identity
-RUN aws sts assume-role --role-arn arn:aws:iam::137756892286:role/service-ai-platform-dev-gitlab-runner --role-session-name s3-access-session
+# RUN aws sts assume-role --role-arn arn:aws:iam::137756892286:role/service-ai-platform-dev-gitlab-runner --role-session-name s3-access-session
 COPY . /metaflow
 RUN pip install -e /metaflow
 RUN pip install 
