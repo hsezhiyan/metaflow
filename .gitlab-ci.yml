@@ -1,7 +1,7 @@
 # Barebones template to ensure pipeline is triggered
 include:
-  - environments/devex.yml
-  - aws.yml
+  - local: '/environments/devex.yml'
+  - local: '/blocks/aws.yaml'
 
 build:
   extends: 
