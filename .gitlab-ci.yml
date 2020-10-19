@@ -7,15 +7,20 @@ include:
     ref: '837cf35e33594b94e84b732ccad15df16dfa9826'  # Pin to a commit/branch to prevent unwanted changes occurring.
     file: 'blocks/aws.yml'
 
+.move_before_changes:
+  before_script:
+    - mv aip-metaflow-cicd-integration /root/aip-metaflow-cicd-integration
 
 build:
   extends: 
+    - .move_before_changes
     - .devex_internal_eks
     - .generate_kubeconfig
   variables:
     PIPELINE_VERSION: "1.0"
   stage: build
   script:
+    - ls /root/aip-metaflow-cicd-integration
     - ls 
     - ls ../
     - ls ../../
