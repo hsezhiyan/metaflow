@@ -1,6 +1,12 @@
 # Barebones template to ensure pipeline is triggered
+include:
+  - environments/devex.yml
+  - aws.yml
 
 build:
+  extends: 
+    - .devex_internal_eks
+    - .generate_kubeconfig
   stage: build
   script:
     - docker build .

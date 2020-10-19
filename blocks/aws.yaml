@@ -1,0 +1,82 @@
+# Need to duplicate this logic as it already lives in blocks/docker.yml.
+# See: https://gitlab.com/gitlab-org/gitlab/-/issues/227093
+# Prefix all logs with a timestamp so aid in debugging.
+# Stolen from https://gitlab.com/gitlab-org/gitlab-foss/-/issues/22745#note_246904663
+.debug_logging: &debug-logging |-
+    if [ ! -z "${DEBUG_TIMESTAMPS}" ]; then
+      logging_pipe=/tmp/$$.logging
+      mkfifo $logging_pipe
+      awk '{ gsub(/%/, "%%"); printf "\033[2m[" strftime("%H:%M:%S") "]\033[0m " $0 "\n" }' <$logging_pipe&
+      exec >$logging_pipe 2>&1
+      rm $logging_pipe
+    fi
+    if [ ! -z "${DEBUG_LOGGING}" ]; then
+      set -x  # Print a rendered copy of each command that is running.
+    fi
+  
+    # Define a function for running a command, then capturing stdout, stderr to separate variables.
+    # Usage: catch RET STDOUT STDERR cmd args..
+    # For a detailed explanation see: https://stackoverflow.com/a/41069638/724251
+    catch() {
+      # Temporarily disable xtrace output since that messes up our capturing of logs.
+      # Dump the logs for this check /dev/null so this is an invisible command to the user.
+      {
+          xtrace_enabled="${-//[^x]/}"
+          if [ ! -z "${xtrace_enabled}" ]; then
+              set +x
+          fi
+      } 2>/dev/null
+  
+      eval "$({
+        __2="$(
+          { __1="$("${@:4}")"; } 2>&1;
+          ret=$?;
+          printf '%q=%q\n' "$2" "$__1" >&2;
+          exit $ret
+        )"
+        ret="$?";
+        # One change we've made is to also capture the return code in a separate variable.
+        printf '%s=%q\n' "$1" "$ret" >&2;
+        printf '%s=%q\n' "$3" "$__2" >&2;
+        printf '( exit %q )' "$ret" >&2;
+      } 2>&1 )";
+  
+      {
+          ret = "$?"
+          if [ ! -z "${xtrace_enabled}" ]; then
+              set -x
+          fi
+          return $ret
+      } 2>/dev/null
+    }
+  
+  .generate_kubeconfig:
+    before_script:
+      - |
+        if [ -z "${PIPELINE_VERSION}" ]; then
+          echo "No PIPELINE_VERSION=${PIPELINE_VERSION} provided."
+          exit 1
+        fi
+      - export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-$DEFAULT_AWS_DEFAULT_REGION}"
+      - SESSION_NAME="${EKS_CLUSTER_NAME:-$DEFAULT_EKS_CLUSTER_NAME}-${PIPELINE_VERSION}"
+      - |
+        assume_role_output=$( \
+          aws sts assume-role \
+            --role-arn ${KUBECONFIG_IAM_ROLE:-$DEFAULT_KUBECONFIG_IAM_ROLE} \
+            --role-session-name "${SESSION_NAME:0:63}" \
+            --output text \
+            --query "[Credentials.AccessKeyId,Credentials.SecretAccessKey,Credentials.SessionToken,Credentials.Expiration]" \
+        )
+      - export AWS_ACCESS_KEY_ID=$(echo $assume_role_output | awk -F' ' '{print $1}')
+      - export AWS_SECRET_ACCESS_KEY=$(echo $assume_role_output | awk -F' ' '{print $2}')
+      - export AWS_SESSION_TOKEN=$(echo $assume_role_output | awk -F' ' '{print $3}')
+      - aws_assume_role_expiration=$(echo $assume_role_output | awk -F' ' '{print $4}')
+      # The extends syntax doesn't recursively deep merge arrays, only maps by default. So use the "YAML
+      # anchors for script" syntax instead, see: https://docs.gitlab.com/ee/ci/yaml/#yaml-anchors-for-script
+      # Bug that is tracking issue: https://gitlab.com/gitlab-org/gitlab/-/issues/16376
+      - *debug-logging
+      # Output some debugging logging just in case we need to triage issues.
+      - |
+        echo "Access credentials for ${EKS_CLUSTER_NAME:-$DEFAULT_EKS_CLUSTER_NAME}: len(AWS_ACCESS_KEY_ID)=${#AWS_ACCESS_KEY_ID},len(AWS_SECRET_ACCESS_KEY)=${#AWS_SECRET_ACCESS_KEY},len(AWS_SESSION_TOKEN)=${#AWS_SESSION_TOKEN},Expiration=${aws_assume_role_expiration},AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
+      - aws --region us-west-2 eks update-kubeconfig --name ${EKS_CLUSTER_NAME:-$DEFAULT_EKS_CLUSTER_NAME}
+    allow_failure: false  
