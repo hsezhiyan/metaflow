@@ -1,7 +1,12 @@
 # Barebones template to ensure pipeline is triggered
 include:
-  - local: '/environments/devex.yml'
-  - local: '/blocks/aws.yaml'
+  - project: 'analytics/artificial-intelligence/ai-platform/aip-infrastructure/ci-templates/ci-cd-template'
+    ref: '837cf35e33594b94e84b732ccad15df16dfa9826'  # Pin to a commit/branch to prevent unwanted changes occurring.
+    file: 'environments/devex.yml'
+  - project: 'analytics/artificial-intelligence/ai-platform/aip-infrastructure/ci-templates/ci-cd-template'
+    ref: '837cf35e33594b94e84b732ccad15df16dfa9826'  # Pin to a commit/branch to prevent unwanted changes occurring.
+    file: 'blocks/aws.yml'
+
 
 build:
   extends: 
