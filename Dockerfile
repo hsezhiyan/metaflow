@@ -1,6 +1,7 @@
 FROM hsezhiyan/metaflow-integration-testing:1.0
 COPY . /metaflow
 RUN pip install -e /metaflow
+RUN aws sts get-caller-identity
 RUN export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && \
     export KFP_SDK_NAMESPACE=metaflow-integration-testing && \
     export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-stage/metaflow/ && \
