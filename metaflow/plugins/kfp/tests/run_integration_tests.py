@@ -61,7 +61,7 @@ def test_sample_flows(flow_file_path):
     # run id and capture this to correctly test logging. See the
     # `check_valid_logs_process` process.
     run_and_wait_process = run(
-        f"python3 {full_path} --datastore=s3 kfp run --wait-for-completion",
+        f"python3 {full_path} --datastore=s3 kfp run --no-s3-code-package --wait-for-completion",
         text=True,
         stdout=PIPE,
         shell=True,
