@@ -12,7 +12,7 @@ def task_run_integration_tests():
     """Compiles pipeline."""
     return {
         "actions": [
-            "docker run --rm -v $(pwd):/home/zservice "
+            "docker run --rm -v /builds/analytics/artificial-intelligence/ai-platform/aip-workflow/aip-metaflow-cicd-integration:/home/zservice "
             + "hsezhiyan/metaflow-integration-testing:1.0 "
             + "bash -c '"
             + "ls && "
