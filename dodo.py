@@ -18,8 +18,9 @@ def task_run_integration_tests():
     """Compiles pipeline."""
     return {
         "actions": [
-            "docker run --rm metaflow-integration-testing:1.0 "
+            "docker run --rm "
             + _metaflow_kube_mounts()
+            + "metaflow-integration-testing:1.0 "
             + "bash -c '"
             + "export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && "
             + "export KFP_SDK_NAMESPACE=aip-example && "
