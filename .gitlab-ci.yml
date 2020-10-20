@@ -20,6 +20,7 @@ build:
     PIPELINE_VERSION: "1.0"
   stage: build
   script:
+    - aws sts get-caller-identity
     - docker build .
 
 test:
