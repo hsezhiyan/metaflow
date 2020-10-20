@@ -20,6 +20,10 @@ def task_run_integration_tests():
         "actions": [
             "docker run --rm "
             + _metaflow_kube_mounts()
+            + "-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID "
+            + "-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY "
+            + "-e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN "
+            + "-e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION "
             + "metaflow-integration-testing:1.0 "
             + "bash -c '"
             + "aws sts get-caller-identity && "
