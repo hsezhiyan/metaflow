@@ -13,7 +13,7 @@ def task_run_integration_tests():
     _default_pipeline_name = "aip-metaflow-example-train"
     return {
         "actions": [
-            "docker run --rm -v ./:/home/zservice "
+            "docker run --rm -v $(pwd):/home/zservice "
             + "hsezhiyan/metaflow-integration-testing:1.0 "
             + "bash -c '"
             # + "export METAFLOW_USER=compile_only_user "
