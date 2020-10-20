@@ -27,12 +27,12 @@ def task_run_integration_tests():
             + "export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-dev/metaflow/ && "
             + "export METAFLOW_DEFAULT_DATASTORE=local && "
             + "export METAFLOW_USER=hariharans@zillowgroup.com && "
-            + "pip install -e /home/zservice && "
-            + "cd /home/zservice/metaflow/plugins/kfp/tests && "
+            + "pip install -e /home/zservice/metaflow && "
+            + "cd /home/zservice/metaflow/metaflow/plugins/kfp/tests && "
             + "python -m pytest -s -n 2 run_integration_tests.py'"
         ],
     }
 
 """
-docker run -v /Users/hariharans/Desktop/metaflow:/opt/zillow hsezhiyan/metaflow-integration-testing:1.0 bash -c 'pip install -e /opt/zillow'
+docker run -v $(pwd):/opt/zillow hsezhiyan/metaflow-integration-testing:1.0 bash -c 'pip install -e /opt/zillow'
 """
