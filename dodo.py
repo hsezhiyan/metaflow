@@ -8,7 +8,7 @@ def _metaflow_kube_mounts():
        + ("-v /root/.aws:/home/zservice/.aws " if (Path.home() / Path(".aws")).exists() else ""))
 
 # TODO AIP-1766 Move compile_pipeline task to aip-doit-modules
-def task_compile_pipeline():
+def task_run_integration_tests():
     """Compiles pipeline."""
     _default_pipeline_name = "aip-metaflow-example-train"
     return {
