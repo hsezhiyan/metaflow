@@ -135,6 +135,8 @@ def run(
         s3_code_package,
     )
 
+    print(f"Namespace: {namespace}, API Namespace: {api+namespace}")
+
     if yaml_only:
         pipeline_path = flow.create_kfp_pipeline_yaml(pipeline_path)
         obj.echo(
@@ -225,6 +227,8 @@ def make_flow(obj, name, namespace, api_namespace, base_image, s3_code_package):
         )
 
     from metaflow.plugins.kfp.kfp import KubeflowPipelines
+
+    print(f"Namespace: {namespace}, API_NAMEPSACE: {api_namespace}, username: {get_username()}")
 
     return KubeflowPipelines(
         name,
