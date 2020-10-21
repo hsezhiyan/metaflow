@@ -226,8 +226,6 @@ def make_flow(obj, name, namespace, api_namespace, base_image, s3_code_package):
 
     from metaflow.plugins.kfp.kfp import KubeflowPipelines
 
-    print(f"Namespace: {namespace}, API_NAMEPSACE: {api_namespace}, username: {get_username()}")
-
     return KubeflowPipelines(
         name,
         obj.graph,

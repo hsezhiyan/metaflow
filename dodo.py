@@ -3,14 +3,14 @@ from pathlib import Path
 
 def _metaflow_kube_mounts():
     return (
-       ("-v /root/.kube:/home/zservice/.kube " if (Path.home() / Path(".kube")).exists() else "")
-       + ("-v /root/.aws:/home/zservice/.aws " if (Path.home() / Path(".aws")).exists() else "")
+       ("-v ~/.kube:/home/zservice/.kube " if (Path.home() / Path(".kube")).exists() else "")
+       + ("-v ~/.aws:/home/zservice/.aws " if (Path.home() / Path(".aws")).exists() else "")
     )
 
 def task_build_docker_image():
     return {
         "actions": [
-            "docker build --tag metaflow-integration-testing:1.0 ."
+            "docker build -f dockerfiles/integration_testing_image/Dockerfile -t metaflow-integration-testing:1.0 ."
         ],
     }
 
@@ -20,7 +20,6 @@ def task_run_integration_tests():
     return {
         "actions": [
             "docker run --rm "
-            + _metaflow_kube_mounts()
             + "-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID "
             + "-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY "
             + "-e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN "
@@ -35,7 +34,7 @@ def task_run_integration_tests():
             + "export METAFLOW_DEFAULT_DATASTORE=local && "
             + "export METAFLOW_USER=hariharans@zillowgroup.com && "
             + "cd /metaflow/metaflow/plugins/kfp/tests && "
-            + "python sample_flows/static_branching.py kfp run --no-s3-code-package --wait-for-completion && "
+            + "python sample_flows/static_branching.py kfp run --no-s3-code-package --wait-for-completion --base-image hsezhiyan/kfp-base:1.0 && "
             + "python -m pytest -s -n 2 run_integration_tests.py'"
         ],
     }
