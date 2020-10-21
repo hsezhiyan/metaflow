@@ -19,9 +19,3 @@ build:
     - pip install doit
     - python3 -m doit build_docker_image
     - python3 -m doit run_integration_tests
-
-test:
-  stage: test
-  script:
-    - ls
-    - docker build .

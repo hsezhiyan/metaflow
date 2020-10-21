@@ -1,12 +1,3 @@
-import os
-from pathlib import Path
-
-def _metaflow_kube_mounts():
-    return (
-       ("-v ~/.kube:/home/zservice/.kube " if (Path.home() / Path(".kube")).exists() else "")
-       + ("-v ~/.aws:/home/zservice/.aws " if (Path.home() / Path(".aws")).exists() else "")
-    )
-
 def task_build_docker_image():
     return {
         "actions": [
@@ -37,7 +28,3 @@ def task_run_integration_tests():
             + "python -m pytest -s -n 2 run_integration_tests.py'"
         ],
     }
-
-"""
-docker run -v $(pwd):/opt/zillow hsezhiyan/metaflow-integration-testing:1.0 bash -c 'pip install -e /opt/zillow'
-"""
