@@ -4,7 +4,8 @@ from pathlib import Path
 def _metaflow_kube_mounts():
     return (
        ("-v /root/.kube:/home/zservice/.kube " if (Path.home() / Path(".kube")).exists() else "")
-       + ("-v /root/.aws:/home/zservice/.aws " if (Path.home() / Path(".aws")).exists() else ""))
+       + ("-v /root/.aws:/home/zservice/.aws " if (Path.home() / Path(".aws")).exists() else "")
+    )
 
 def task_build_docker_image():
     return {
