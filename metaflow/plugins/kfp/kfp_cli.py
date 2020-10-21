@@ -135,8 +135,6 @@ def run(
         s3_code_package,
     )
 
-    print(f"Namespace: {namespace}, API Namespace: {api+namespace}")
-
     if yaml_only:
         pipeline_path = flow.create_kfp_pipeline_yaml(pipeline_path)
         obj.echo(
