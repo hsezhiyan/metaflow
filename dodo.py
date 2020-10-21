@@ -33,6 +33,7 @@ def task_run_integration_tests():
             + "export METAFLOW_DEFAULT_DATASTORE=local && "
             + "export METAFLOW_USER=hariharans@zillowgroup.com && "
             + "cd /metaflow/metaflow/plugins/kfp/tests && "
+            + "python sample_flows/static_branching.py kfp run --no-s3-code-package --wait-for-completion"
             + "python -m pytest -s -n 2 run_integration_tests.py'"
         ],
     }
