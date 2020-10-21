@@ -28,7 +28,7 @@ def task_run_integration_tests():
             + "bash -c '"
             + "aws sts get-caller-identity && "
             + "export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && "
-            + "export KFP_SDK_NAMESPACE=metaflow-integration-testing && "
+            + "export KFP_SDK_NAMESPACE=aip-example && "
             + "export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-dev/metaflow/ && "
             + "export METAFLOW_DEFAULT_DATASTORE=local && "
             + "export METAFLOW_USER=hariharans@zillowgroup.com && "
