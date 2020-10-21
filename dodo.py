@@ -26,6 +26,7 @@ def task_run_integration_tests():
             + "-e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION "
             + "metaflow-integration-testing:1.0 "
             + "bash -c '"
+            + "cat /home/zservice/.kube/config && "
             + "aws sts get-caller-identity && "
             + "export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && "
             + "export KFP_SDK_NAMESPACE=aip-example && "
