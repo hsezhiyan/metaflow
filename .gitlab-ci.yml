@@ -18,4 +18,7 @@ build:
     - mv /root/.kube .
     - pip install doit
     - python3 -m doit build_docker_image
+
+test:
+    - pip install doit
     - python3 -m doit run_integration_tests
