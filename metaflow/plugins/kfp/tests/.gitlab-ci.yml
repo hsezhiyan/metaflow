@@ -19,14 +19,14 @@ build:
   stage: build
   script:
     - cp -r /root/.kube .
-    - docker build -f metaflow/plugins/kfp/tests/Dockerfile -t metaflow-integration-testing:1.0 .
+    - docker build -f metaflow/plugins/kfp/dockeriles/integration_testing_full_image/Dockerfile -t integration-testing-full-image:1.0 .
     - docker run 
         --rm 
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
-        metaflow-integration-testing:1.0 
+        integration-testing-full-image:1.0 
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
           export KFP_SDK_NAMESPACE=aip-example && 
