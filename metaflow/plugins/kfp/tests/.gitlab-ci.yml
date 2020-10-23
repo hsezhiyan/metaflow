@@ -20,7 +20,6 @@ build:
   script:
     - cp -r /root/.kube ../../../../
     - docker build -f metaflow/plugins/kfp/tests/Dockerfile -t metaflow-integration-testing:1.0 ../../../../
-    - ls /metaflow
     - docker run 
         --rm 
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
