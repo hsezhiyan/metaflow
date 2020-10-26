@@ -36,7 +36,7 @@ test:internal:
     - ls /builds/analytics/artificial-intelligence/ai-platform/aip-workflow/aip-metaflow-cicd-integration
     - ls .kube
     - docker run 
-        --mount type=bind,source=${PWD}/.kube,target=/home/zservice/.kube
+        -v $PWD/.kube:/opt/zillow/.kube
         --rm 
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
@@ -44,6 +44,7 @@ test:internal:
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
         hsezhiyan/kfp-base:1.1  
         bash -c "
+          cp -r /opt/zillow/.kube /home/zservice && ls /home/zservice/.kube &&
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
           export KFP_SDK_NAMESPACE=aip-example && 
           export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-dev/metaflow/ && 
@@ -62,18 +63,19 @@ test:nonprod:
   stage: test
   script:
     - cp -r /root/.kube .
-    - docker run
-        --privileged
-        -v ${PWD}/.kube:/home/zservice/.kube
+    - ls .kube
+    - docker run 
         --rm 
+        -v $PWD/.kube:/opt/zillow/.kube
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
         hsezhiyan/kfp-base:1.1  
         bash -c "
+          cp -r /opt/zillow/.kube /home/zservice && ls /home/zservice/.kube &&
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
-          export KFP_SDK_NAMESPACE=aip-example-stage && 
+          export KFP_SDK_NAMESPACE=aip-example && 
           export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-dev/metaflow/ && 
           export METAFLOW_DEFAULT_DATASTORE=local && 
           export METAFLOW_USER=hariharans@zillowgroup.com && 
@@ -90,18 +92,21 @@ test:prod:
   stage: test
   script:
     - cp -r /root/.kube .
-    - docker run
-        --privileged
-        --rm
-        -v ${PWD}/.kube:/home/zservice/.kube
+    - ls .kube
+    - docker run 
+        --rm 
+        -v $PWD/.kube:/opt/zillow/.kube
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
         hsezhiyan/kfp-base:1.1  
         bash -c "
+          ls /opt/zillow
+          ls /opt/zillow/.kube
+          cp -r /opt/zillow/.kube /home/zservice && ls /home/zservice/.kube &&
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
-          export KFP_SDK_NAMESPACE=aip-example-prod && 
+          export KFP_SDK_NAMESPACE=aip-example && 
           export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-dev/metaflow/ && 
           export METAFLOW_DEFAULT_DATASTORE=local && 
           export METAFLOW_USER=hariharans@zillowgroup.com && 
