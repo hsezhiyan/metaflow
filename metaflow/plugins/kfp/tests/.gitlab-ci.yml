@@ -34,6 +34,7 @@ test:internal:
   script:
     - docker run 
         --rm 
+        --mount type=bind,source=/root/.kube,target=/home/zservice/.kube
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
@@ -59,6 +60,7 @@ test:nonprod:
   script:
     - docker run 
         --rm 
+        --mount type=bind,source=/root/.kube,target=/home/zservice/.kube
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
@@ -83,7 +85,8 @@ test:prod:
   stage: test
   script:
     - docker run 
-        --rm 
+        --rm
+        --mount type=bind,source=/root/.kube,target=/home/zservice/.kube
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
