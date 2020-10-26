@@ -33,6 +33,8 @@ test:internal:
   stage: test
   script:
     - cp -r /root/.kube .
+    - ls /builds/analytics/artificial-intelligence/ai-platform/aip-workflow/aip-metaflow-cicd-integration
+    - ls .kube
     - docker run 
         --mount type=bind,source=${PWD}/.kube,target=/home/zservice/.kube
         --rm 
@@ -61,7 +63,7 @@ test:nonprod:
   script:
     - cp -r /root/.kube .
     - docker run 
-        --mount type=bind,source=${PWD}/.kube,target=/home/zservice/.kube
+        -v ${PWD}/.kube:/home/zservice/.kube
         --rm 
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
@@ -88,8 +90,8 @@ test:prod:
   script:
     - cp -r /root/.kube .
     - docker run
-        --mount type=bind,source=${PWD}/.kube,target=/home/zservice/.kube
         --rm
+        -v ${PWD}/.kube:/home/zservice/.kube
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
