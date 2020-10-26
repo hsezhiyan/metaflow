@@ -34,7 +34,7 @@ test:internal:
   script:
     - cp -r /root/.kube .
     - docker run 
-        --mount type=bind,source=.kube,target=/home/zservice/.kube
+        --mount type=bind,source=${PWD}/.kube,target=/home/zservice/.kube
         --rm 
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
@@ -61,7 +61,7 @@ test:nonprod:
   script:
     - cp -r /root/.kube .
     - docker run 
-        --mount type=bind,source=.kube,target=/home/zservice/.kube
+        --mount type=bind,source=${PWD}/.kube,target=/home/zservice/.kube
         --rm 
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
@@ -88,7 +88,7 @@ test:prod:
   script:
     - cp -r /root/.kube .
     - docker run
-        --mount type=bind,source=.kube,target=/home/zservice/.kube
+        --mount type=bind,source=${PWD}/.kube,target=/home/zservice/.kube
         --rm
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
