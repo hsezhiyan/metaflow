@@ -12,7 +12,7 @@ include:
 
 build:
   extends: 
-    - .devex_internal_eks
+    - .devex_nonprod_eks
     - .generate_kubeconfig
   variables:
     PIPELINE_VERSION: "1.0"
