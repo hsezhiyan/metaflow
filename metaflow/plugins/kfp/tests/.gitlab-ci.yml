@@ -28,6 +28,7 @@ test:internal:
   extends: 
     - .devex_internal_eks
     - .generate_kubeconfig
+    - .configure_shared_path
   variables:
     PIPELINE_VERSION: "1.0"
   stage: test
@@ -36,7 +37,7 @@ test:internal:
     - ls /builds/analytics/artificial-intelligence/ai-platform/aip-workflow/aip-metaflow-cicd-integration
     - ls .kube
     - docker run 
-        -v $PWD/.kube/config:/home/zservice/.kube/config
+        -v ${SHARED_PATH}/.kube:/home/zservice/.kube
         --rm 
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
