@@ -62,7 +62,8 @@ test:nonprod:
   stage: test
   script:
     - cp -r /root/.kube .
-    - docker run 
+    - docker run
+        --privileged
         -v ${PWD}/.kube:/home/zservice/.kube
         --rm 
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
@@ -90,6 +91,7 @@ test:prod:
   script:
     - cp -r /root/.kube .
     - docker run
+        --privileged
         --rm
         -v ${PWD}/.kube:/home/zservice/.kube
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
