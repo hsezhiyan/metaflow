@@ -23,6 +23,7 @@ test:internal:
     - .devex_internal_eks
     - .generate_kubeconfig
   variables:
+    GIT_STRATEGY: none
     PIPELINE_VERSION: "1.0"
   stage: test
   script:
@@ -55,6 +56,7 @@ test:nonprod:
     - .devex_nonprod_eks
     - .generate_kubeconfig
   variables:
+    GIT_STRATEGY: none
     PIPELINE_VERSION: "1.0"
   stage: test
   script:
@@ -87,6 +89,7 @@ test:prod:
     - .devex_prod_eks
     - .generate_kubeconfig
   variables:
+    GIT_STRATEGY: none
     PIPELINE_VERSION: "1.0"
   stage: test
   script:
