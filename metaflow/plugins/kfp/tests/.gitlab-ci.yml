@@ -18,7 +18,6 @@ build:
     PIPELINE_VERSION: "1.0"
   stage: build
   script:
-    - cp -r /root/.kube .
     - docker build -f metaflow/plugins/kfp/dockerfiles/integration_testing_full_image/Dockerfile -t integration-testing-full-image:1.0 .
     - docker login --username=hsezhiyan --password=building!
     - docker tag integration-testing-full-image:1.0 hsezhiyan/kfp-base:1.1
