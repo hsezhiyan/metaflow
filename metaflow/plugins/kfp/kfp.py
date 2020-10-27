@@ -95,7 +95,7 @@ class KubeflowPipelines(object):
             else ["cd " + str(Path(inspect.getabsfile(self.flow.__class__)).parent)]
         )
         commands.extend(environment.bootstrap_commands(step_name)
-        commands.append("echo 'Task is starting.'")
+        commands.append("echo 'Task is starting.'"))
         commands.extend(step_cli)
         return " && ".join(commands)
 
