@@ -39,7 +39,7 @@ test:internal:
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
-        hsezhiyan/kfp-base:1.3
+        hsezhiyan/kfp-base:$CI_COMMIT_SHA
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
           export KFP_SDK_NAMESPACE=aip-example && 
@@ -49,7 +49,7 @@ test:internal:
           cat /home/zservice/metaflow/metaflow/plugins/kfp/tests/sample_flows/merge_artifacts.py &&
           cat /home/zservice/metaflow/metaflow/plugins/kfp/kfp.py &&
           cd /home/zservice/metaflow/metaflow/plugins/kfp/tests && 
-          python -m pytest -s -n 2 run_integration_tests.py
+          python -m pytest -s -n 2 run_integration_tests.py --tag $CI_COMMIT_SHA
         "
 
 test:nonprod:
@@ -72,7 +72,7 @@ test:nonprod:
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
-        hsezhiyan/kfp-base:1.3
+        hsezhiyan/kfp-base:$CI_COMMIT_SHA
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.stage-k8s.zg-aip.net/ && 
           export KFP_SDK_NAMESPACE=aip-example-stage && 
@@ -82,7 +82,7 @@ test:nonprod:
           cat /home/zservice/metaflow/metaflow/plugins/kfp/tests/sample_flows/merge_artifacts.py &&
           cat /home/zservice/metaflow/metaflow/plugins/kfp/kfp.py && 
           cd /home/zservice/metaflow/metaflow/plugins/kfp/tests && 
-          python -m pytest -s -n 2 run_integration_tests.py
+          python -m pytest -s -n 2 run_integration_tests.py --tag $CI_COMMIT_SHA
         "
 
 test:prod:
@@ -105,7 +105,7 @@ test:prod:
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION  
-        hsezhiyan/kfp-base:1.3
+        hsezhiyan/kfp-base:$CI_COMMIT_SHA
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.prod-k8s.zg-aip.net/ && 
           export KFP_SDK_NAMESPACE=aip-example-prod && 
@@ -115,5 +115,5 @@ test:prod:
           cat /home/zservice/metaflow/metaflow/plugins/kfp/tests/sample_flows/merge_artifacts.py &&
           cat /home/zservice/metaflow/metaflow/plugins/kfp/kfp.py &&
           cd /home/zservice/metaflow/metaflow/plugins/kfp/tests && 
-          python -m pytest -s -n 2 run_integration_tests.py
+          python -m pytest -s -n 2 run_integration_tests.py --tag $CI_COMMIT_SHA
         "

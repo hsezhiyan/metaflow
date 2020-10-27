@@ -12,7 +12,7 @@ class MergeArtifacts(FlowSpec):
     @step
     def a(self):
         assert self.pass_down == "a"
-        self.common = 5
+        self.common = 5 / 0
         self.common_2 = 4
         self.x = 1
         self.y = 3
