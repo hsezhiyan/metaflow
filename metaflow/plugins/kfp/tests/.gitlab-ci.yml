@@ -35,14 +35,11 @@ test:internal:
     - export CONTAINER_ID=$(docker ps -q -f "label=com.gitlab.gitlab-runner.job.id=$CI_JOB_ID" -f "label=com.gitlab.gitlab-runner.type=build")
     - export MOUNT_NAME=$(docker inspect $CONTAINER_ID -f "{{ range .Mounts }}{{ if eq .Destination \"/builds\" }}{{ .Source }}{{end}}{{end}}")
     - export SHARED_PATH=$MOUNT_NAME/$CI_PROJECT_PATH  
-    - cp -r /root/.kube .
+    - cp -r /root/.kube . && cp -r /root/.aws .
     - docker run 
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube
+        -v ${SHARED_PATH}/.aws:/home/zservice/.aws
         --rm 
-        -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
-        -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
-        -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
-        -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
         hsezhiyan/kfp-base:1.1  
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
@@ -65,14 +62,11 @@ test:nonprod:
     - export CONTAINER_ID=$(docker ps -q -f "label=com.gitlab.gitlab-runner.job.id=$CI_JOB_ID" -f "label=com.gitlab.gitlab-runner.type=build")
     - export MOUNT_NAME=$(docker inspect $CONTAINER_ID -f "{{ range .Mounts }}{{ if eq .Destination \"/builds\" }}{{ .Source }}{{end}}{{end}}")
     - export SHARED_PATH=$MOUNT_NAME/$CI_PROJECT_PATH  
-    - cp -r /root/.kube .
+    - cp -r /root/.kube . && cp -r /root/.aws .
     - docker run
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube 
+        -v ${SHARED_PATH}/.aws:/home/zservice/.aws
         --rm 
-        -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
-        -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
-        -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
-        -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
         hsezhiyan/kfp-base:1.1  
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
@@ -95,14 +89,11 @@ test:prod:
     - export CONTAINER_ID=$(docker ps -q -f "label=com.gitlab.gitlab-runner.job.id=$CI_JOB_ID" -f "label=com.gitlab.gitlab-runner.type=build")
     - export MOUNT_NAME=$(docker inspect $CONTAINER_ID -f "{{ range .Mounts }}{{ if eq .Destination \"/builds\" }}{{ .Source }}{{end}}{{end}}")
     - export SHARED_PATH=$MOUNT_NAME/$CI_PROJECT_PATH 
-    - cp -r /root/.kube .
+    - cp -r /root/.kube . && cp -r /root/.aws .
     - docker run
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube 
+        -v ${SHARED_PATH}/.aws:/home/zservice/.aws
         --rm 
-        -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
-        -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
-        -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
-        -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
         hsezhiyan/kfp-base:1.1  
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
