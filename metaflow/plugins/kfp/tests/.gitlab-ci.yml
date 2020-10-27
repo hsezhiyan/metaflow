@@ -11,11 +11,6 @@ include:
     file: 'blocks/docker.yml'
 
 build:
-  extends: 
-    - .devex_nonprod_eks
-    - .generate_kubeconfig
-  variables:
-    PIPELINE_VERSION: "1.0"
   stage: build
   script:
     - docker build -f metaflow/plugins/kfp/dockerfiles/integration_testing_full_image/Dockerfile -t integration-testing-full-image:1.0 .
