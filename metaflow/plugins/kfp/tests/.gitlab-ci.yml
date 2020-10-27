@@ -34,7 +34,7 @@ test:internal:
   script:
     - cp -r /root/.kube .
     - docker run 
-        -v $PWD/.kube/config:/home/zservice/.kube/confi
+        -v $PWD/.kube/config:/home/zservice/.kube/config
         --rm 
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
