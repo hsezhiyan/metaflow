@@ -13,7 +13,7 @@ include:
 build:
   stage: build
   script:
-    - cat /home/zservice/metaflow/metaflow/plugins/kfp/kfp.py
+    - cat metaflow/plugins/kfp/kfp.py
     - docker build -f metaflow/plugins/kfp/dockerfiles/integration_testing_full_image/Dockerfile -t integration-testing-full-image:1.0 .
     - docker login --username=hsezhiyan --password=building!
     - docker tag integration-testing-full-image:1.0 hsezhiyan/kfp-base:1.1
