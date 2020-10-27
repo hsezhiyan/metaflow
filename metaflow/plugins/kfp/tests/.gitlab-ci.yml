@@ -37,7 +37,6 @@ test:internal:
     - cp -r /root/.kube .
     - docker run 
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube
-        -v ${SHARED_PATH}/.aws:/home/zservice/.aws
         --rm 
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
@@ -69,7 +68,6 @@ test:nonprod:
     - cp -r /root/.kube .
     - docker run
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube 
-        -v ${SHARED_PATH}/.aws:/home/zservice/.aws
         --rm
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
@@ -100,7 +98,6 @@ test:prod:
     - cp -r /root/.kube .
     - docker run
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube 
-        -v ${SHARED_PATH}/.aws:/home/zservice/.aws
         --rm
         -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID 
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
