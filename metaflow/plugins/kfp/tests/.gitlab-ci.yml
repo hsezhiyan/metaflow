@@ -1,13 +1,13 @@
 # Barebones template to ensure pipeline is triggered
 include:
   - project: 'analytics/artificial-intelligence/ai-platform/aip-infrastructure/ci-templates/ci-cd-template'
-    ref: '53e9fe3fe825c9208bee24c583b8fc8ee89bad70' 
+    ref: '3b8c32fe05885711834ed42682da35e35ac2eaf0' 
     file: 'environments/devex.yml'
   - project: 'analytics/artificial-intelligence/ai-platform/aip-infrastructure/ci-templates/ci-cd-template'
-    ref: '53e9fe3fe825c9208bee24c583b8fc8ee89bad70'  
+    ref: '3b8c32fe05885711834ed42682da35e35ac2eaf0'  
     file: 'blocks/aws.yml'
   - project: 'analytics/artificial-intelligence/ai-platform/aip-infrastructure/ci-templates/ci-cd-template'
-    ref: '53e9fe3fe825c9208bee24c583b8fc8ee89bad70'
+    ref: '3b8c32fe05885711834ed42682da35e35ac2eaf0'
     file: 'blocks/docker.yml'
 
 .export_shared_path:
