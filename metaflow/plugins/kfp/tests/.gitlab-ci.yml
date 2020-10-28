@@ -11,7 +11,7 @@ include:
     file: 'blocks/docker.yml'
 
 .export_shared_path:
-  before_script:
+  script:
   - export CONTAINER_ID=$(docker ps -q -f "label=com.gitlab.gitlab-runner.job.id=$CI_JOB_ID" -f "label=com.gitlab.gitlab-runner.type=build")
   - export MOUNT_NAME=$(docker inspect $CONTAINER_ID -f "{{ range .Mounts }}{{ if eq .Destination \"/builds\" }}{{ .Source }}{{end}}{{end}}")
   - export SHARED_PATH=$MOUNT_NAME/$CI_PROJECT_PATH
