@@ -63,7 +63,7 @@ def test_sample_flows(pytestconfig, flow_file_path):
     run_and_wait_process = run(
         f"python3 {full_path} kfp run --no-s3-code-package" 
         f" --wait-for-completion --base-image hsezhiyan/kfp-base:{pytestconfig.getoption('tag')}",
-        text=True,
+        universal_newlines=True,
         stdout=PIPE,
         shell=True,
     )
