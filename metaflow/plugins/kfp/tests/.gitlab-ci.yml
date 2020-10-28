@@ -46,7 +46,7 @@ test:internal:
         hsezhiyan/kfp-base:$CI_COMMIT_SHA
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
-          export KFP_SDK_NAMESPACE=aip-example && 
+          export KFP_SDK_NAMESPACE=metaflow-integration-testing && 
           export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-dev/metaflow/ && 
           export METAFLOW_USER=hariharans@zillowgroup.com &&
           cd /home/zservice/metaflow/metaflow/plugins/kfp/tests && 
@@ -74,7 +74,7 @@ test:nonprod:
         hsezhiyan/kfp-base:$CI_COMMIT_SHA
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.stage-k8s.zg-aip.net/ && 
-          export KFP_SDK_NAMESPACE=aip-example-stage && 
+          export KFP_SDK_NAMESPACE=metaflow-integration-testing-dev && 
           export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-stage/metaflow/ && 
           export METAFLOW_USER=hariharans@zillowgroup.com &&
           cd /home/zservice/metaflow/metaflow/plugins/kfp/tests && 
@@ -102,7 +102,7 @@ test:prod:
         hsezhiyan/kfp-base:$CI_COMMIT_SHA
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.prod-k8s.zg-aip.net/ && 
-          export KFP_SDK_NAMESPACE=aip-example-prod && 
+          export KFP_SDK_NAMESPACE=metaflow-integration-testing-prod && 
           export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-prod/metaflow/ &&
           export METAFLOW_USER=hariharans@zillowgroup.com && 
           cd /home/zservice/metaflow/metaflow/plugins/kfp/tests && 
