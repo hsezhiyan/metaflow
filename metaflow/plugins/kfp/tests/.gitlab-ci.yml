@@ -39,6 +39,8 @@ test:internal:
   script:
     - *export-shared-path  
     - cp -r /root/.kube .
+    - echo "$CR_PAT" | docker login -u USERNAME --password-stdin docker.pkg.github.com
+    - docker pull docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
     - docker run 
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube
         --rm 
@@ -67,6 +69,7 @@ test:nonprod:
   script:
     - *export-shared-path  
     - cp -r /root/.kube .
+    - docker pull docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
     - docker run
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube 
         --rm
