@@ -1,13 +1,13 @@
 # Barebones template to ensure pipeline is triggered
 include:
   - project: 'analytics/artificial-intelligence/ai-platform/aip-infrastructure/ci-templates/ci-cd-template'
-    ref: '3b8c32fe05885711834ed42682da35e35ac2eaf0' 
+    ref: '37d84c8a56036de2567f88f7ede7557566d3cb53' 
     file: 'environments/devex.yml'
   - project: 'analytics/artificial-intelligence/ai-platform/aip-infrastructure/ci-templates/ci-cd-template'
-    ref: '3b8c32fe05885711834ed42682da35e35ac2eaf0'  
+    ref: '37d84c8a56036de2567f88f7ede7557566d3cb53'  
     file: 'blocks/aws.yml'
   - project: 'analytics/artificial-intelligence/ai-platform/aip-infrastructure/ci-templates/ci-cd-template'
-    ref: '3b8c32fe05885711834ed42682da35e35ac2eaf0'
+    ref: '37d84c8a56036de2567f88f7ede7557566d3cb53'
     file: 'blocks/docker.yml'
 
 .export_shared_path:
@@ -20,9 +20,12 @@ build:
   stage: build
   script:
     - docker build -f metaflow/plugins/kfp/dockerfiles/integration_testing_full_image/Dockerfile -t integration-testing-full-image:1.0 .
-    - docker login --username=hsezhiyan --password=$DOCKERHUB_PASSWORD
-    - docker tag integration-testing-full-image:1.0 hsezhiyan/kfp-base:$CI_COMMIT_SHA
-    - docker push hsezhiyan/kfp-base
+    # - docker login --username=hsezhiyan --password=$DOCKERHUB_PASSWORD
+    - echo "$CR_PAT" | docker login -u USERNAME --password-stdin docker.pkg.github.com
+    # - docker tag integration-testing-full-image:1.0 hsezhiyan/kfp-base:$CI_COMMIT_SHA
+    - docker tag integration-testing-full-image:1.0 docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
+    # - docker push hsezhiyan/kfp-base
+    - docker push docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
 
 test:internal:
   extends: 
@@ -43,7 +46,7 @@ test:internal:
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
-        hsezhiyan/kfp-base:$CI_COMMIT_SHA
+        docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
           export KFP_SDK_NAMESPACE=metaflow-integration-testing && 
@@ -71,7 +74,7 @@ test:nonprod:
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
-        hsezhiyan/kfp-base:$CI_COMMIT_SHA
+        docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.stage-k8s.zg-aip.net/ && 
           export KFP_SDK_NAMESPACE=metaflow-integration-testing-dev && 
@@ -99,7 +102,7 @@ test:prod:
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION  
-        hsezhiyan/kfp-base:$CI_COMMIT_SHA
+        docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.prod-k8s.zg-aip.net/ && 
           export KFP_SDK_NAMESPACE=metaflow-integration-testing-prod && 
