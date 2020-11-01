@@ -109,6 +109,7 @@ test:internal:
   stage: test
   script:
     - *export-shared-path  
+    - echo ${BUILT_IMAGE_FULL_PATH}
     - cp -r /root/.kube .
     - docker run 
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube
