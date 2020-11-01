@@ -95,6 +95,7 @@ build:
     - *init-variables
     - *build-and-push-docker-image
     - export BUILT_IMAGE_FULL_PATH=${DOCKER_REPO_URL}/${_EXPANDED_VERSION_DOCKER_IMAGE_NAME}:${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}
+    - echo ${BUILT_IMAGE_FULL_PATH}
   artifacts:
     paths:
       - ${BUILT_IMAGE_FULL_PATH}
@@ -108,7 +109,7 @@ test:internal:
     PIPELINE_VERSION: "1.0"
   stage: test
   script:
-    - *export-shared-path  
+    - *export-shared-path 
     - echo ${BUILT_IMAGE_FULL_PATH}
     - cp -r /root/.kube .
     - docker run 
