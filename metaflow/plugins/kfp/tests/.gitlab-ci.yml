@@ -42,6 +42,47 @@ variables:
     - 'echo "export _NAMED_VERSION_DOCKER_IMAGE_NAME=${_NAMED_VERSION_PROJECT_NAMESPACE}/${ARTIFACT_NAME}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
     - 'echo "export _NAMED_VERSION_DOCKER_IMAGE_TAG=${_ARTIFACT_VERSION}.${CI_COMMIT_REF_SLUG}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
 
+.build_and_push_docker_image:
+  script: &build-and-push-docker-image
+    # Source the artifact from the init job to enable access to shared-env-variables
+    - 'source ${_SHARED_ENV_FILE}'
+
+    # Build Artifact (i.e: Docker Image) in Gitlab current pipeline-job-container
+    - 'docker build --no-cache -f metaflow/plugins/kfp/dockerfiles/integration_testing_full_image/Dockerfile -t ${_LOCAL_DOCKER_TAG} .'
+
+    # Function definitions for logging and uploading to docker repository
+    - 'function log_upload_path {
+        DOCKER_IMAGE_NAME=$1;
+        DOCKER_IMAGE_TAG=$2;
+        echo "Project Image Repository -" $(echo ${ARTIFACTORY_WEB_APP_URL}/$(echo "${DOCKER_IMAGE_NAME}" | sed "s/\//~2F/g" | xargs -0 printf "%b"));
+      }'
+
+    - 'function docker_push {
+           LOCAL_DOCKER_TAG=$1;
+           DOCKER_IMAGE_NAME=$2;
+           DOCKER_IMAGE_TAG=$3;
+           export DOCKER_REPO_UPLOAD_PATH=${DOCKER_REPO_URL}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG};
+
+           docker tag ${LOCAL_DOCKER_TAG} ${DOCKER_REPO_UPLOAD_PATH};
+           docker push ${DOCKER_REPO_UPLOAD_PATH};
+           log_upload_path ${DOCKER_IMAGE_NAME} ${DOCKER_IMAGE_TAG};
+       }'
+
+    # Login to docker
+    - 'echo ${DOCKER_API_KEY} | docker login -u ${DOCKER_USERNAME} --password-stdin ${DOCKER_REPO_URL}'
+
+    # Push to artifactory repo (overwrites are NOT allowed to docker-images in this repo)
+    - 'echo "Will run docker push" ${_LOCAL_DOCKER_TAG} ${_EXPANDED_VERSION_DOCKER_IMAGE_NAME} ${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}'
+    - 'docker_push ${_LOCAL_DOCKER_TAG} ${_EXPANDED_VERSION_DOCKER_IMAGE_NAME} ${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}'
+
+    # Push to artifactory repo (overwrites ARE allowed to docker-images in this repo)
+    - 'echo "Will run docker push" ${_LOCAL_DOCKER_TAG} ${_NAMED_VERSION_DOCKER_IMAGE_NAME} ${_NAMED_VERSION_DOCKER_IMAGE_TAG}'
+    - 'docker_push ${_LOCAL_DOCKER_TAG} ${_NAMED_VERSION_DOCKER_IMAGE_NAME} ${_NAMED_VERSION_DOCKER_IMAGE_TAG}'
+    - 'cat ${_SHARED_ENV_FILE}'
+
+    - 'echo "built-image-url: ${DOCKER_REPO_URL}/${_EXPANDED_VERSION_DOCKER_IMAGE_NAME}:${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}"'
+    - 'echo "built-image-url: ${DOCKER_REPO_URL}/${_NAMED_VERSION_DOCKER_IMAGE_NAME}:${_NAMED_VERSION_DOCKER_IMAGE_TAG}"'
+   
 .export_shared_path:
   script: &export-shared-path
   - export CONTAINER_ID=$(docker ps -q -f "label=com.gitlab.gitlab-runner.job.id=$CI_JOB_ID" -f "label=com.gitlab.gitlab-runner.type=build")
@@ -52,14 +93,16 @@ build:
   stage: build
   script:
     - *init-variables
-    - echo ${_LOCAL_DOCKER_TAG}
-    - docker build -f metaflow/plugins/kfp/dockerfiles/integration_testing_full_image/Dockerfile -t integration-testing-full-image:1.0 .
-    # - docker login --username=hsezhiyan --password=$DOCKERHUB_PASSWORD
-    - echo "$CR_PAT" | docker login -u USERNAME --password-stdin docker.pkg.github.com
-    # - docker tag integration-testing-full-image:1.0 hsezhiyan/kfp-base:$CI_COMMIT_SHA
-    - docker tag integration-testing-full-image:1.0 docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
-    # - docker push hsezhiyan/kfp-base
-    - docker push docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
+    - *build-and-push-docker-image
+    - echo ${DOCKER_REPO_URL}/${_EXPANDED_VERSION_DOCKER_IMAGE_NAME}:${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}
+    # - echo ${_LOCAL_DOCKER_TAG}
+    # - docker build -f metaflow/plugins/kfp/dockerfiles/integration_testing_full_image/Dockerfile -t integration-testing-full-image:1.0 .
+    # # - docker login --username=hsezhiyan --password=$DOCKERHUB_PASSWORD
+    # - echo "$CR_PAT" | docker login -u USERNAME --password-stdin docker.pkg.github.com
+    # # - docker tag integration-testing-full-image:1.0 hsezhiyan/kfp-base:$CI_COMMIT_SHA
+    # - docker tag integration-testing-full-image:1.0 docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
+    # # - docker push hsezhiyan/kfp-base
+    # - docker push docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
 
 test:internal:
   extends: 
