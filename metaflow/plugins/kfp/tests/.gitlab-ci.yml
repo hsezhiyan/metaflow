@@ -11,7 +11,7 @@ include:
     file: 'blocks/docker.yml'
 
 variables:
-  ARTIFACT_NAME: "shared_artifact"
+  ARTIFACT_NAME: "metaflow_integration_testing"
   ARTIFACT_MAJOR_VERSION: "1"
   ARTIFACT_MINOR_VERSION: "0"
   ARTIFACTORY_WEB_APP_URL: https://artifactory.zgtools.net/artifactory/webapp/#/packages/docker
@@ -82,6 +82,10 @@ variables:
 
     - 'echo "built-image-url: ${DOCKER_REPO_URL}/${_EXPANDED_VERSION_DOCKER_IMAGE_NAME}:${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}"'
     - 'echo "built-image-url: ${DOCKER_REPO_URL}/${_NAMED_VERSION_DOCKER_IMAGE_NAME}:${_NAMED_VERSION_DOCKER_IMAGE_TAG}"'
+    - export BUILT_IMAGE_FULL_PATH=${DOCKER_REPO_URL}/${_EXPANDED_VERSION_DOCKER_IMAGE_NAME}:${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}
+  artifacts:
+    paths:
+      - ${BUILT_IMAGE_FULL_PATH}
    
 .export_shared_path:
   script: &export-shared-path
@@ -94,7 +98,6 @@ build:
   script:
     - *init-variables
     - *build-and-push-docker-image
-    - echo ${DOCKER_REPO_URL}/${_EXPANDED_VERSION_DOCKER_IMAGE_NAME}:${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}
     # - echo ${_LOCAL_DOCKER_TAG}
     # - docker build -f metaflow/plugins/kfp/dockerfiles/integration_testing_full_image/Dockerfile -t integration-testing-full-image:1.0 .
     # # - docker login --username=hsezhiyan --password=$DOCKERHUB_PASSWORD
@@ -116,8 +119,6 @@ test:internal:
   script:
     - *export-shared-path  
     - cp -r /root/.kube .
-    - echo "$CR_PAT" | docker login -u USERNAME --password-stdin docker.pkg.github.com
-    - docker pull docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
     - docker run 
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube
         --rm 
@@ -125,14 +126,14 @@ test:internal:
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
-        docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
+        ${BUILT_IMAGE_FULL_PATH}
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.dev-k8s.zg-aip.net/ && 
           export KFP_SDK_NAMESPACE=metaflow-integration-testing && 
           export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-dev/metaflow/ && 
           export METAFLOW_USER=hariharans@zillowgroup.com &&
           cd /home/zservice/metaflow/metaflow/plugins/kfp/tests && 
-          python -m pytest -s -n 2 run_integration_tests.py --tag $CI_COMMIT_SHA
+          python -m pytest -s -n 2 run_integration_tests.py --tag ${BUILT_IMAGE_FULL_PATH}
         "
 
 test:nonprod:
@@ -146,7 +147,6 @@ test:nonprod:
   script:
     - *export-shared-path  
     - cp -r /root/.kube .
-    - docker pull docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
     - docker run
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube 
         --rm
@@ -154,14 +154,14 @@ test:nonprod:
         -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
         -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN 
         -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION 
-        docker.pkg.github.com/zillow/metaflow/kfp-base:$CI_COMMIT_SHA
+        source ${BUILT_IMAGE_FULL_PATH}
         bash -c "
           export KFP_RUN_URL_PREFIX=https://kubeflow.corp.stage-k8s.zg-aip.net/ && 
           export KFP_SDK_NAMESPACE=metaflow-integration-testing-dev && 
           export METAFLOW_DATASTORE_SYSROOT_S3=s3://aip-example-stage/metaflow/ && 
           export METAFLOW_USER=hariharans@zillowgroup.com &&
           cd /home/zservice/metaflow/metaflow/plugins/kfp/tests && 
-          python -m pytest -s -n 2 run_integration_tests.py --tag $CI_COMMIT_SHA
+          python -m pytest -s -n 2 run_integration_tests.py --tag ${BUILT_IMAGE_FULL_PATH}
         "
 
 test:prod:
