@@ -10,36 +10,37 @@ include:
     ref: '37d84c8a56036de2567f88f7ede7557566d3cb53'
     file: 'blocks/docker.yml'
 
-.generate_docker_image_version:
-  script: &generate-docker-image-version-before-script
-  - |
-    if [ -z "${DOCKER_REPO_URL}" ] || [ -z "${MAJOR_VERSION}" ] || [ -z "${MINOR_VERSION}" ]; then
-      echo "No DOCKER_REPO_URL=${DOCKER_REPO_URL}, MAJOR_VERSION=${MAJOR_VERSION} or MINOR_VERSION=${MINOR_VERSION} provided."
-      exit 1
-    fi
-  - IMAGE_TAG="${MAJOR_VERSION}.${MINOR_VERSION}.${CI_COMMIT_SHORT_SHA}.${CI_COMMIT_REF_SLUG}"
-  - |
-    # Unfortunately we require gawk for a number of commands, but mawk is typically installed by default and has different substr behaviour.
-    awk_version=$(awk -W version | sed -n 1p | awk '{print $1}')
-    offset=$(if [ "${awk_version}" == "GNU" ]; then echo 1; else echo 0; fi)
-    # Grab the team name from the closest Gitlab group to the Artificial Intelligence umbrella group.
-    DEFAULT_TEAM_NAME=$(echo $CI_PROJECT_PATH | awk -v offset=$offset '{ split($0,parts,"/artificial-intelligence/");print substr(parts[2],0,index(parts[2],"/")-offset) }')
-    IMAGE_PATH=${ARTIFACT_NAME:-$CI_PROJECT_NAME}
-    if [ ! -z "${TEAM_NAME}" ] || [ ! -z "${DEFAULT_TEAM_NAME}" ]; then
-      # Only if we have successfully found a team name should we construct a path using it.
-      IMAGE_PATH=${TEAM_NAME:-$DEFAULT_TEAM_NAME}/${IMAGE_PATH}
-    fi
-  - IMAGE_REPOSITORY=${DOCKER_REPO_URL}/${ORGANIZATION_NAME}/${IMAGE_PATH}
-  - IMAGE_REPOSITORY_TAG=${IMAGE_REPOSITORY}:${IMAGE_TAG}
-  # Log these versions as build artifacts for subsequent stages to utilize.
-  - mkdir -p versions
-  - echo ${IMAGE_TAG} > ${IMAGE_TAG_PATH}
-  - echo ${IMAGE_REPOSITORY} > ${IMAGE_REPOSITORY_PATH}
-  - echo ${IMAGE_REPOSITORY_TAG} > ${IMAGE_REPOSITORY_TAG_PATH}
+variables:
+  ARTIFACT_NAME: "shared_artifact"
+  ARTIFACT_MAJOR_VERSION: "1"
+  ARTIFACT_MINOR_VERSION: "0"
+  ARTIFACTORY_WEB_APP_URL: https://artifactory.zgtools.net/artifactory/webapp/#/packages/docker
+  _SHARED_ENV_FILE: 'shared.env'
+
+.base:job-with-artifacts:
   artifacts:
     paths:
-    - versions
-    expire_in: "6 months"
+      - ${_SHARED_ENV_FILE}
+
+.init_variables:
+  extends: .base:job-with-artifacts
+  script: &init-variables
+    - 'touch ${_SHARED_ENV_FILE}'
+    - 'export _USER_ID=$(echo ${GITLAB_USER_EMAIL} | sed "s/@.*//")'
+    - 'echo "export _USER_ID=${_USER_ID}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
+
+    # Setup required environment-variables
+    - 'echo "export _ARTIFACT_VERSION=${ARTIFACT_MAJOR_VERSION}.${ARTIFACT_MINOR_VERSION}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
+    - 'echo "export _LOCAL_DOCKER_TAG=${ARTIFACT_NAME}:${_ARTIFACT_VERSION}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
+
+    # Tag: major.minor.commit-sha.branch-name
+    - 'echo "export _EXPANDED_VERSION_DOCKER_IMAGE_NAME=${CI_PROJECT_NAMESPACE}/${ARTIFACT_NAME}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
+    - 'echo "export _EXPANDED_VERSION_DOCKER_IMAGE_TAG=${_ARTIFACT_VERSION}.${CI_COMMIT_SHORT_SHA}.${CI_COMMIT_REF_SLUG}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
+
+    # Tag: major.minor.branch-name
+    - 'echo "export _NAMED_VERSION_PROJECT_NAMESPACE=$(echo ${CI_PROJECT_NAMESPACE} | cut -d "/" -f 1)/docker-images/$(echo ${CI_PROJECT_NAMESPACE} | cut -d "/" -f 2-)" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
+    - 'echo "export _NAMED_VERSION_DOCKER_IMAGE_NAME=${_NAMED_VERSION_PROJECT_NAMESPACE}/${ARTIFACT_NAME}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
+    - 'echo "export _NAMED_VERSION_DOCKER_IMAGE_TAG=${_ARTIFACT_VERSION}.${CI_COMMIT_REF_SLUG}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
 
 .export_shared_path:
   script: &export-shared-path
@@ -50,7 +51,7 @@ include:
 build:
   stage: build
   script:
-    - *generate-docker-image-version-before-script
+    - *init-variables
     - docker build -f metaflow/plugins/kfp/dockerfiles/integration_testing_full_image/Dockerfile -t integration-testing-full-image:1.0 .
     # - docker login --username=hsezhiyan --password=$DOCKERHUB_PASSWORD
     - echo "$CR_PAT" | docker login -u USERNAME --password-stdin docker.pkg.github.com
