@@ -52,6 +52,7 @@ build:
   stage: build
   script:
     - *init-variables
+    - echo ${_LOCAL_DOCKER_TAG}
     - docker build -f metaflow/plugins/kfp/dockerfiles/integration_testing_full_image/Dockerfile -t integration-testing-full-image:1.0 .
     # - docker login --username=hsezhiyan --password=$DOCKERHUB_PASSWORD
     - echo "$CR_PAT" | docker login -u USERNAME --password-stdin docker.pkg.github.com
