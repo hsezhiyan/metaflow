@@ -23,9 +23,9 @@ variables:
     paths:
       - ${_SHARED_ENV_FILE}
 
-.init_variables:
+.init_docker_variables:
   extends: .base:job-with-artifacts
-  script: &init-variables
+  script: &init-docker-variables
     - 'touch ${_SHARED_ENV_FILE}'
     - 'export _USER_ID=$(echo ${GITLAB_USER_EMAIL} | sed "s/@.*//")'
     - 'echo "export _USER_ID=${_USER_ID}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
@@ -43,8 +43,8 @@ variables:
     - 'echo "export _NAMED_VERSION_DOCKER_IMAGE_NAME=${_NAMED_VERSION_PROJECT_NAMESPACE}/${ARTIFACT_NAME}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
     - 'echo "export _NAMED_VERSION_DOCKER_IMAGE_TAG=${_ARTIFACT_VERSION}.${CI_COMMIT_REF_SLUG}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
 
-.build_and_push_docker_image:
-  script: &build-and-push-docker-image
+.path_to_host_file_directory:
+  script: &path-to-host-file-directory
     # Source the artifact from the init job to enable access to shared-env-variables
     - 'source ${_SHARED_ENV_FILE}'
 
@@ -93,7 +93,7 @@ variables:
 build:
   stage: build
   script:
-    - *init-variables
+    - *init-docker-variables
     - *build-and-push-docker-image
     - export BUILT_IMAGE_FULL_PATH=${DOCKER_REPO_URL}/${_EXPANDED_VERSION_DOCKER_IMAGE_NAME}:${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}
     - echo ${BUILT_IMAGE_FULL_PATH} > ${_IMAGE_TAG_FILE}
@@ -110,7 +110,7 @@ test:internal:
     PIPELINE_VERSION: "1.0"
   stage: test
   script:
-    - *export-shared-path 
+    - *path-to-host-file-directory
     - export BUILT_IMAGE_FULL_PATH=$( cat ${_IMAGE_TAG_FILE} ) 
     - cp -r /root/.kube .
     - docker run 
@@ -139,7 +139,7 @@ test:nonprod:
     PIPELINE_VERSION: "1.0"
   stage: test
   script:
-    - *export-shared-path  
+    - *path-to-host-file-directory  
     - export BUILT_IMAGE_FULL_PATH=$( cat ${_IMAGE_TAG_FILE} )
     - cp -r /root/.kube .
     - docker run
@@ -168,7 +168,7 @@ test:prod:
     PIPELINE_VERSION: "1.0"
   stage: test
   script:
-    - *export-shared-path
+    - *path-to-host-file-directory
     - export BUILT_IMAGE_FULL_PATH=$( cat ${_IMAGE_TAG_FILE} )
     - cp -r /root/.kube .
     - docker run
