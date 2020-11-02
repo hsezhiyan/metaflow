@@ -179,18 +179,11 @@ def run(
                     ),
                     fg="green",
                 )
-                # print("start_marker|success|end_marker")
             else:
-                obj.echo(
-                    "Flow: {flow_name}, run link: {kfp_run_url}\n  FAILED!".format(
-                        flow_name=current.flow_name, kfp_run_url=kfp_run_url
-                    ),
-                    fg="red",
+                raise Exception("Flow: {flow_name}, run link: {kfp_run_url}, error: {error}\n  FAILED!".format(
+                        flow_name=current.flow_name, kfp_run_url=kfp_run_url, error=response.error
+                    )
                 )
-                # print("start_marker|failure|end_marker")
-            obj.echo(dir(response))
-            # print(f"run_id|{run_pipeline_result.run_id}|end_id")
-
 
 def make_flow(obj, name, namespace, api_namespace, base_image, s3_code_package):
     """

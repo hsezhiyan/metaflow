@@ -8,7 +8,7 @@ class StaticBranching(FlowSpec):
 
     @step
     def br1(self):
-        self.var1 = 100
+        self.var1 = 100 / 0
         self.next(self.br11, self.br12)
 
     @step
