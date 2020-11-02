@@ -43,8 +43,8 @@ variables:
     - 'echo "export _NAMED_VERSION_DOCKER_IMAGE_NAME=${_NAMED_VERSION_PROJECT_NAMESPACE}/${ARTIFACT_NAME}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
     - 'echo "export _NAMED_VERSION_DOCKER_IMAGE_TAG=${_ARTIFACT_VERSION}.${CI_COMMIT_REF_SLUG}" >> ${_SHARED_ENV_FILE}; source ${_SHARED_ENV_FILE}'
 
-.path_to_host_file_directory:
-  script: &path-to-host-file-directory
+.build_and_push_docker_image:
+  script: &build-and-push-docker-image
     # Source the artifact from the init job to enable access to shared-env-variables
     - 'source ${_SHARED_ENV_FILE}'
 
@@ -84,8 +84,8 @@ variables:
     - 'echo "built-image-url: ${DOCKER_REPO_URL}/${_EXPANDED_VERSION_DOCKER_IMAGE_NAME}:${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}"'
     - 'echo "built-image-url: ${DOCKER_REPO_URL}/${_NAMED_VERSION_DOCKER_IMAGE_NAME}:${_NAMED_VERSION_DOCKER_IMAGE_TAG}"'
    
-.export_shared_path:
-  script: &export-shared-path
+.path_to_host_file_directory:
+  script: &path-to-host-file-directory
   - export CONTAINER_ID=$(docker ps -q -f "label=com.gitlab.gitlab-runner.job.id=$CI_JOB_ID" -f "label=com.gitlab.gitlab-runner.type=build")
   - export MOUNT_NAME=$(docker inspect $CONTAINER_ID -f "{{ range .Mounts }}{{ if eq .Destination \"/builds\" }}{{ .Source }}{{end}}{{end}}")
   - export SHARED_PATH=$MOUNT_NAME/$CI_PROJECT_PATH
