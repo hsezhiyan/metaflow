@@ -180,8 +180,8 @@ def run(
                     fg="green",
                 )
             else:
-                raise Exception("Flow: {flow_name}, run link: {kfp_run_url}, error: {error}\n  FAILED!".format(
-                        flow_name=current.flow_name, kfp_run_url=kfp_run_url, error=response.run.status
+                raise Exception("Flow: {flow_name}, run link: {kfp_run_url} FAILED!".format(
+                        flow_name=current.flow_name, kfp_run_url=kfp_run_url
                     )
                 )
 
