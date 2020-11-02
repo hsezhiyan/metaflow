@@ -16,6 +16,7 @@ variables:
   ARTIFACT_MINOR_VERSION: "0"
   ARTIFACTORY_WEB_APP_URL: https://artifactory.zgtools.net/artifactory/webapp/#/packages/docker
   _SHARED_ENV_FILE: 'shared.env'
+  _IMAGE_TAG_FILE: 'image_tag_file.txt'
 
 .base:job-with-artifacts:
   artifacts:
@@ -95,10 +96,11 @@ build:
     - *init-variables
     - *build-and-push-docker-image
     - export BUILT_IMAGE_FULL_PATH=${DOCKER_REPO_URL}/${_EXPANDED_VERSION_DOCKER_IMAGE_NAME}:${_EXPANDED_VERSION_DOCKER_IMAGE_TAG}
-    - echo ${BUILT_IMAGE_FULL_PATH}
+    - echo ${BUILT_IMAGE_FULL_PATH} > ${_IMAGE_TAG_FILE}
+    - cat ${_IMAGE_TAG_FILE}
   artifacts:
     paths:
-      - ${BUILT_IMAGE_FULL_PATH}
+      - ${_IMAGE_TAG_FILE}
 
 test:internal:
   extends: 
@@ -110,7 +112,8 @@ test:internal:
   stage: test
   script:
     - *export-shared-path 
-    - echo ${BUILT_IMAGE_FULL_PATH}
+    - source ${_IMAGE_TAG_FILE}
+    - export ${BUILT_IMAGE_FULL_PATH}=$( cat ${_IMAGE_TAG_FILE} ) 
     - cp -r /root/.kube .
     - docker run 
         -v ${SHARED_PATH}/.kube:/home/zservice/.kube
